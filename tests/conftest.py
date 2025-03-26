@@ -1,6 +1,8 @@
 import pytest
 from selenium import webdriver
 
+from config import BASE_URL
+
 
 @pytest.fixture
 def driver():
@@ -11,6 +13,5 @@ def driver():
 
 @pytest.fixture
 def open_page(driver):
-    driver.get('https://spongebob-squarepants-lordfilm.ru/')
+    driver.get(BASE_URL)
     yield driver
-    driver.quit()

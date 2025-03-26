@@ -1,13 +1,15 @@
+from venv import logger
+
 from selenium.webdriver.chrome.webdriver import WebDriver
 
 from framework_mixins.element_actions_mixin import _ElementActionsMixin
 from web.locator import Locator
-from loguru import logger
+
 
 
 class _CheckerElementsMixin(_ElementActionsMixin):
     def __init__(self, driver: WebDriver):
-        super().__init__(driver=driver)
+        _ElementActionsMixin.__init__(self, driver=driver)
 
     def is_displayed_by_locator(self, locator: Locator, timeout=15) -> bool:
         try:
