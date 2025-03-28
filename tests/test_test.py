@@ -1,11 +1,17 @@
-import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-from my_page.my_methods import MyMethods
+def test_open_google():
+    options = Options()
+    options.set_capability("browserName", "chrome")
+    options.set_capability("version", "119.0")
+    options.set_capability("enableVNC", True)
 
+    driver = webdriver.Remote(
+        command_executor="http://localhost:4444/wd/hub",
+        options=options
+    )
 
-class TestOpenRequest:
-    @pytest.mark.usefixtures("driver")
-    def test_open_request_success(self, open_page):
-        driver = open_page
-        page = MyMethods(driver=driver)
-        page.open_request()
+    driver.get("https://www.google.com")
+    assert "Google" in driver.title
+    driver.quit()

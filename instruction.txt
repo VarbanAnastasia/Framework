@@ -1,0 +1,9 @@
+1. Скачать докер десктоп https://www.docker.com/products/docker-desktop/
+2. В гит баш вводишь по очереди
+docker pull selenoid/chrome:119.0
+docker-compose up -d
+
+3. Проверь, что доступен UI: http://localhost:8080
+
+4. Записти  тест pytest tests/test_open_google.py
+
