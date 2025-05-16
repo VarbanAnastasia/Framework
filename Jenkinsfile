@@ -6,14 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                echo '🔄 Клонируем репозиторий вручную...'
-                git branch: 'feature/01',
-                    url: 'https://github.com/VarbanAnastasia/Framework.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Собираем Docker-образ...'
