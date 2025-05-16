@@ -22,5 +22,5 @@ pipeline {
 //                 sh 'cat result.log'
 //             }
 //         }
-//     }
+    }
 }
