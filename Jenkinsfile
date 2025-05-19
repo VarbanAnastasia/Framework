@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    options {
-        skipDefaultCheckout()
-    }
-
     stages {
         stage('Build Docker Image') {
             steps {
@@ -15,16 +11,22 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo '🚀 Запускаем тесты...'
-                sh 'docker run --rm framework-tests | tee result.log'
+                echo '🚀 Запускаем автотесты...'
+                sh 'docker run --rm -v $PWD/allure-results:/app/allure-results framework-tests'
             }
         }
 
-        stage('Show Logs') {
+        stage('Allure Report') {
             steps {
-                echo '📄 Вывод логов:'
-                sh 'cat result.log'
+                echo '📊 Показываем отчёт...'
+                allure includeProperties: false, results: [[path: 'allure-results']]
             }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
         }
     }
 }
