@@ -30,7 +30,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
+            archiveArtifacts artifacts: 'allure-results/**/*', fingerprint: true
         }
     }
 }
