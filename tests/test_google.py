@@ -1,6 +1,6 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import requests
 
-def test_google_url(open_page):
-    open_page.get("https://www.google.com")
-    assert "google" in open_page.current_url
+def test_get_status_code():
+    """Проверка, что запрос возвращает 200"""
+    response = requests.get("https://httpbin.org/get")
+    assert response.status_code == 200
