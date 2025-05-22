@@ -15,17 +15,17 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo '🚀 Запускаем тесты внутри контейнера...'
+                echo '🚀 Запускаем тесты...'
                 sh 'mkdir -p allure-results'
                 sh 'docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME'
             }
         }
+    }
 
-        stage('Allure Report') {
-            steps {
-                echo '📊 Генерируем Allure-отчёт...'
-                allure includeProperties: false, results: [[path: 'allure-results']]
-            }
+    post {
+        always {
+            echo '📊 Генерируем Allure-отчёт (даже если тесты упали)...'
+            allure includeProperties: false, results: [[path: 'allure-results']]
         }
     }
 }
