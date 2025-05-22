@@ -3,10 +3,16 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'framework-tests'
-        WORKSPACE_DIR = "${env.WORKSPACE}"
     }
 
     stages {
+        stage('Prepare Workspace') {
+            steps {
+                echo '📁 Готовим директорию для отчётов...'
+                sh 'mkdir -p allure-results'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Собираем Docker-образ...'
@@ -17,7 +23,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo '🚀 Запускаем тесты внутри контейнера...'
-                sh "docker run --rm -v $WORKSPACE_DIR/allure-results:/app/allure-results $IMAGE_NAME"
+                sh "docker run --rm -v $WORKSPACE/allure-results:/app/allure-results $IMAGE_NAME"
             }
         }
 
@@ -31,6 +37,7 @@ pipeline {
 
     post {
         always {
+            echo '📦 Архивируем результаты...'
             archiveArtifacts artifacts: 'allure-results/**/*', fingerprint: true
         }
     }

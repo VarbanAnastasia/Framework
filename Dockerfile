@@ -7,4 +7,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-CMD ["pytest", "tests/", "--alluredir=allure-results"]
+CMD ["pytest", "tests/", "--alluredir=/app/allure-results"]
