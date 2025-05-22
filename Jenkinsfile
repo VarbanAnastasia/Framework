@@ -8,23 +8,22 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Собираем Docker-образ из исходников Jenkins workspace...'
-                sh 'docker build -t framework-tests .'
+                echo '🐳 Собираем Docker-образ...'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-
         stage('Run Tests') {
             steps {
-                echo '🚀 Запускаем тесты...'
-                sh "mkdir -p allure-results"
-                sh "docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME"
+                echo '🚀 Запускаем тесты внутри контейнера...'
+                sh 'mkdir -p allure-results'
+                sh 'docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME'
             }
         }
 
         stage('Allure Report') {
             steps {
-                echo '📊 Генерируем отчёт Allure...'
+                echo '📊 Генерируем Allure-отчёт...'
                 allure includeProperties: false, results: [[path: 'allure-results']]
             }
         }
