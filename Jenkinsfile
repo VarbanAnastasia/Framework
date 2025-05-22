@@ -8,10 +8,11 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Собираем Docker-образ...'
-                sh "docker build -t $IMAGE_NAME ."
+                echo '🐳 Собираем Docker-образ из исходников Jenkins workspace...'
+                sh 'docker build -t framework-tests .'
             }
         }
+
 
         stage('Run Tests') {
             steps {
