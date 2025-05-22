@@ -22,10 +22,10 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            echo '📊 Генерируем Allure-отчёт (даже если тесты упали)...'
-            allure includeProperties: false, results: [[path: 'allure-results']]
-        }
+post {
+    always {
+        echo '📊 Генерируем Allure-отчёт (даже если тесты упали)...'
+        allure includeProperties: false, results: [[path: 'allure-results']], commandline: 'Allure_jenkins'
     }
 }
+
