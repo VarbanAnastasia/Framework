@@ -6,13 +6,6 @@ pipeline {
     }
 
     stages {
-        stage('Prepare Workspace') {
-            steps {
-                echo '📁 Готовим директорию для отчётов...'
-                sh 'mkdir -p allure-results'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Собираем Docker-образ...'
@@ -22,8 +15,8 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo '🚀 Запускаем тесты внутри контейнера...'
-                sh "docker run --rm -v $WORKSPACE/allure-results:/app/allure-results $IMAGE_NAME"
+                echo '🚀 Запускаем тесты...'
+                sh "docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME"
             }
         }
 
@@ -32,13 +25,6 @@ pipeline {
                 echo '📊 Генерируем отчёт Allure...'
                 allure includeProperties: false, results: [[path: 'allure-results']]
             }
-        }
-    }
-
-    post {
-        always {
-            echo '📦 Архивируем результаты...'
-            archiveArtifacts artifacts: 'allure-results/**/*', fingerprint: true
         }
     }
 }
