@@ -16,7 +16,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo '🚀 Запускаем тесты...'
-                sh 'mkdir -p allure-results'
+                sh 'rm -rf allure-results && mkdir -p allure-results'
                 sh 'docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME'
             }
         }
@@ -29,4 +29,6 @@ pipeline {
             }
         }
 }
+
+
 
