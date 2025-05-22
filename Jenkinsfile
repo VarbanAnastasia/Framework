@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'framework-tests'
+        WORKSPACE_DIR = "${env.WORKSPACE}"
     }
 
     stages {
@@ -16,7 +17,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo '🚀 Запускаем тесты внутри контейнера...'
-                sh "docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME"
+                sh "docker run --rm -v $WORKSPACE_DIR/allure-results:/app/allure-results $IMAGE_NAME"
             }
         }
 
