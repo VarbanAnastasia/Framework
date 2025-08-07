@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Название Python должно совпадать с тем, что ты указала в настройках Jenkins > Tools
-        'jenkins.plugins.shiningpanda.tools.PythonInstallation' 'Python 3.11'
+        'jenkins.plugins.shiningpanda.tools.PythonInstallation' 'Python3.11'
     }
 
     environment {
