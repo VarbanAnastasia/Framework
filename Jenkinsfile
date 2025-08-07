@@ -1,34 +1,59 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11'
+            args '-v $HOME/.cache/pip:/root/.cache/pip'
+        }
+    }
 
     environment {
-        IMAGE_NAME = 'framework-tests'
+        PYTHONPATH = '.'
     }
 
     stages {
-        stage('Build Docker Image') {
+
+        stage('Устанавливаем зависимости') {
             steps {
-                echo '🐳 Собираем Docker-образ...'
-                sh 'docker build -t $IMAGE_NAME .'
+                sh '''
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
-        stage('Run Tests') {
+        stage('🚀 Запускаем тесты...') {
             steps {
-                echo '🚀 Запускаем тесты...'
-                sh 'rm -rf allure-results && mkdir -p allure-results'
-                sh 'docker run --rm -v $PWD/allure-results:/app/allure-results $IMAGE_NAME'
+                sh '''
+                    pytest --alluredir=allure-results
+                '''
+            }
+        }
+
+        stage('📊 Генерируем Allure-отчёт') {
+            steps {
+                sh '''
+                    mkdir -p allure-report
+                    allure generate allure-results -o allure-report --clean
+                '''
+            }
+        }
+
+        stage('Публикуем Allure report') {
+            steps {
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    results: [[path: 'allure-results']]
+                ])
             }
         }
     }
 
-        post {
-            always {
-                echo '📊 Генерируем Allure-отчёт (даже если тесты упали)...'
-                allure includeProperties: false, results: [[path: 'allure-results']], commandline: 'Allure_jenkins'
-            }
+    post {
+        always {
+            archiveArtifacts artifacts: 'allure-report/**', fingerprint: true
         }
+    }
 }
-
 
 
