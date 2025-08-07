@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Название должно совпадать с тем, что указано в Global Tool Configuration
-        python 'Python3.11'
-    }
-
     environment {
         ALLURE_RESULTS = 'allure-results'
     }
