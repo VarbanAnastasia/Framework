@@ -1,40 +1,41 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'  // Используем Docker-образ с Python
-        }
+    agent any
+
+    tools {
+        // Название должно совпадать с тем, что указано в Global Tool Configuration
+        python 'Python3.11'
     }
 
     environment {
-        PYTHONUNBUFFERED = '1'
+        ALLURE_RESULTS = 'allure-results'
     }
 
     stages {
         stage('Install dependencies') {
             steps {
-                sh 'pip install -r requirements.txt'
-                sh 'pip install allure-pytest'
+                withPythonEnv('Python3.11') {
+                    sh '''
+                        python -m pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
+                }
             }
         }
 
         stage('Run tests') {
             steps {
-                sh 'pytest tests/ --alluredir=allure-results'
-            }
-        }
-
-        stage('Allure Report') {
-            steps {
-                allure includeProperties: false,
-                       jdk: '',
-                       results: [[path: 'allure-results']]
+                withPythonEnv('Python3.11') {
+                    sh '''
+                        pytest tests/ --alluredir=${ALLURE_RESULTS}
+                    '''
+                }
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
+            allure includeProperties: false, jdk: '', results: [[path: "${ALLURE_RESULTS}"]]
         }
     }
 }
