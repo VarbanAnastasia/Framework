@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    container_name: selenoid
+    restart: always
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./selenoid/browsers.json:/etc/selenoid/browsers.json
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: [
+      "-limit", "5",
+      "-timeout", "3m",
+      "-conf", "/etc/selenoid/browsers.json"
+    ]
+
+  selenoid-ui:
+    image: aerokube/selenoid-ui
+    container_name: selenoid-ui
+    restart: always
+    links:
+      - selenoid
+    ports:
+      - "8080:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
+
+  allure:
+    image: frankescobar/allure-docker-service
+    container_name: allure
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/allure-report
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+volumes:
+  jenkins_home:
