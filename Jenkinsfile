@@ -1,59 +1,40 @@
 pipeline {
     agent {
         docker {
-            image 'python:3.11'
-            args '-v $HOME/.cache/pip:/root/.cache/pip'
+            image 'python:3.11'  // Используем Docker-образ с Python
         }
     }
 
     environment {
-        PYTHONPATH = '.'
+        PYTHONUNBUFFERED = '1'
     }
 
     stages {
-
-        stage('Устанавливаем зависимости') {
+        stage('Install dependencies') {
             steps {
-                sh '''
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                sh 'pip install -r requirements.txt'
+                sh 'pip install allure-pytest'
             }
         }
 
-        stage('🚀 Запускаем тесты...') {
+        stage('Run tests') {
             steps {
-                sh '''
-                    pytest --alluredir=allure-results
-                '''
+                sh 'pytest tests/ --alluredir=allure-results'
             }
         }
 
-        stage('📊 Генерируем Allure-отчёт') {
+        stage('Allure Report') {
             steps {
-                sh '''
-                    mkdir -p allure-report
-                    allure generate allure-results -o allure-report --clean
-                '''
-            }
-        }
-
-        stage('Публикуем Allure report') {
-            steps {
-                allure([
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'allure-results']]
-                ])
+                allure includeProperties: false,
+                       jdk: '',
+                       results: [[path: 'allure-results']]
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'allure-report/**', fingerprint: true
+            archiveArtifacts artifacts: 'allure-results/**', allowEmptyArchive: true
         }
     }
 }
-
-
